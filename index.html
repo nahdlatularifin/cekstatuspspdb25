@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cek Status Pendaftaran Santri Baru</title>
+  <style>
+    body {
+      background-color: #f0fdf4;
+      font-family: 'Segoe UI', sans-serif;
+      color: #1b4332;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 720px;
+      margin: auto;
+      padding: 2rem;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
+      margin-top: 2rem;
+    }
+    .header {
+      text-align: center;
+      position: relative;
+    }
+    .header img {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 80px;
+    }
+    h1, h2 {
+      margin: 0.5rem 0;
+    }
+    .form-group {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    input[type="text"] {
+      padding: 0.8rem;
+      width: 60%;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      font-size: 1rem;
+      background-color: #40916c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 2rem;
+      background-color: #d8f3dc;
+      padding: 1rem;
+      border-left: 5px solid #2d6a4f;
+      display: none;
+    }
+    .result.error {
+      background-color: #ffe6e6;
+      border-color: #d00000;
+      color: #d00000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://freeimghost.net/images/2025/06/05/LOGO-PONDOK.png" alt="Logo Pondok">
+      <h1>CEK STATUS PENDAFTARAN SANTRI BARU</h1>
+      <h2>PONDOK PESANTREN NAHDLATUL ARIFIN</h2>
+      <p>Tahun Ajaran 1446-1447 H / 2025-2026 M</p>
+    </div>
+    <div class="form-group">
+      <input type="text" id="tanggal" placeholder="Masukkan Tanggal Lahir (DD/MM/YYYY)">
+      <br>
+      <button onclick="cekStatus()">Cek Status</button>
+    </div>
+    <div id="hasil" class="result"></div>
+  </div>
+
+  <script>
+    async function cekStatus() {
+      const tanggal = document.getElementById('tanggal').value.trim();
+      const hasil = document.getElementById('hasil');
+      hasil.style.display = 'none';
+      hasil.classList.remove('error');
+      hasil.innerHTML = '';
+
+      try {
+        const res = await fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?tgllahir=' + encodeURIComponent(tanggal));
+        const data = await res.json();
+
+        if (!data || !data.nama) {
+          hasil.innerHTML = '<strong>Data tidak ditemukan. Pastikan format tanggal sesuai (DD/MM/YYYY)</strong>';
+          hasil.classList.add('error');
+        } else {
+          hasil.innerHTML = `
+            <strong>SELAMAT ANDA TELAH TERDAFTAR SEBAGAI SANTRI BARU DI PONDOK PESANTREN NAHDLATUL ARIFIN TAHUN AJARAN 1446-1447 H / 2025-2026 M</strong><br><br>
+            <strong>Nama:</strong> ${data.nama}<br>
+            <strong>No. Pendaftaran:</strong> ${data.noPendaftaran}<br>
+            <strong>Tanggal Lahir:</strong> ${data.tanggalLahir}<br>
+            <strong>Tanggal Terdaftar:</strong> ${data.tanggalDaftar}<br>
+            <br>
+            <a href="${data.linkPDF}" target="_blank"><button>Download Bukti Pendaftaran</button></a>
+          `;
+        }
+        hasil.style.display = 'block';
+      } catch (err) {
+        hasil.innerHTML = 'Terjadi kesalahan saat mengambil data.';
+        hasil.classList.add('error');
+        hasil.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
