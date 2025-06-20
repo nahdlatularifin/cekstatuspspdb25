@@ -2,68 +2,70 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cek Status Pendaftaran Santri Baru</title>
   <style>
     body {
-      background-color: #f0fdf4;
       font-family: 'Segoe UI', sans-serif;
-      color: #1b4332;
+      background: #e9f5ec;
       margin: 0;
       padding: 0;
+      color: #1b4332;
     }
     .container {
-      max-width: 720px;
-      margin: auto;
+      max-width: 640px;
+      margin: 4rem auto;
+      background: #ffffff;
       padding: 2rem;
-      background-color: #ffffff;
       border-radius: 12px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.05);
-      margin-top: 2rem;
-    }
-    .header {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       text-align: center;
-      position: relative;
     }
-    .header img {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 80px;
+    h1 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #2d6a4f;
     }
-    h1, h2 {
-      margin: 0.5rem 0;
-    }
-    .form-group {
-      margin-top: 2rem;
-      text-align: center;
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #40916c;
+      margin-bottom: 2rem;
     }
     input[type="text"] {
-      padding: 0.8rem;
-      width: 60%;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+      width: 80%;
+      padding: 0.75rem;
       font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 1rem;
     }
     button {
-      margin-top: 1rem;
-      padding: 0.7rem 1.5rem;
-      font-size: 1rem;
-      background-color: #40916c;
+      background: #2d6a4f;
       color: white;
       border: none;
-      border-radius: 6px;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
       cursor: pointer;
     }
-    .result {
-      margin-top: 2rem;
-      background-color: #d8f3dc;
-      padding: 1rem;
-      border-left: 5px solid #2d6a4f;
+    .loading {
       display: none;
+      margin-top: 1rem;
+      color: #6c757d;
+      font-style: italic;
     }
-    .result.error {
+    .result {
+      display: none;
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #d8f3dc;
+      border-left: 5px solid #2d6a4f;
+      border-radius: 8px;
+      text-align: left;
+    }
+    .error {
       background-color: #ffe6e6;
       border-color: #d00000;
       color: #d00000;
@@ -72,16 +74,12 @@
 </head>
 <body>
   <div class="container">
-    <div class="header">
-      <h1>CEK STATUS PENDAFTARAN SANTRI BARU</h1>
-      <h2>PONDOK PESANTREN NAHDLATUL ARIFIN</h2>
-      <p>Tahun Ajaran 1446-1447 H / 2025-2026 M</p>
-    </div>
-    <div class="form-group">
-      <input type="text" id="tanggal" placeholder="Masukkan Tanggal Lahir (DD/MM/YYYY)">
-      <br>
-      <button onclick="cekStatus()">Cek Status</button>
-    </div>
+    <h1>CEK STATUS PENDAFTARAN SANTRI BARU</h1>
+    <h2>PONDOK PESANTREN NAHDLATUL ARIFIN<br/>Tahun Ajaran 1446-1447 H / 2025-2026 M</h2>
+    <input type="text" id="tanggal" placeholder="Masukkan Tanggal Lahir (DD/MM/YYYY)" />
+    <br />
+    <button onclick="cekStatus()">Cek Status</button>
+    <div id="loading" class="loading">Sedang mencari data...</div>
     <div id="hasil" class="result"></div>
   </div>
 
@@ -89,16 +87,20 @@
     async function cekStatus() {
       const tanggal = document.getElementById('tanggal').value.trim();
       const hasil = document.getElementById('hasil');
+      const loading = document.getElementById('loading');
+
       hasil.style.display = 'none';
       hasil.classList.remove('error');
       hasil.innerHTML = '';
+      loading.style.display = 'block';
 
       try {
         const res = await fetch('https://script.google.com/macros/s/AKfycby8rHPqS5fsqFgGXrSL_SmUpQ566pd8j9A32paSB67WlxpX35xUivns1BePguq2br0a/exec?tgllahir=' + encodeURIComponent(tanggal));
         const data = await res.json();
+        loading.style.display = 'none';
 
-        if (!data || !data.nama) {
-          hasil.innerHTML = '<strong>Data tidak ditemukan. Pastikan format tanggal sesuai (DD/MM/YYYY)</strong>';
+        if (!data || !data.found) {
+          hasil.innerHTML = '<strong>Data tidak ditemukan. Pastikan format tanggal sesuai (DD/MM/YYYY).</strong>';
           hasil.classList.add('error');
         } else {
           hasil.innerHTML = `
@@ -113,6 +115,7 @@
         }
         hasil.style.display = 'block';
       } catch (err) {
+        loading.style.display = 'none';
         hasil.innerHTML = 'Terjadi kesalahan saat mengambil data.';
         hasil.classList.add('error');
         hasil.style.display = 'block';
