@@ -73,7 +73,6 @@
 <body>
   <div class="container">
     <div class="header">
-      <img src="https://freeimghost.net/images/2025/06/05/LOGO-PONDOK.png" alt="Logo Pondok">
       <h1>CEK STATUS PENDAFTARAN SANTRI BARU</h1>
       <h2>PONDOK PESANTREN NAHDLATUL ARIFIN</h2>
       <p>Tahun Ajaran 1446-1447 H / 2025-2026 M</p>
@@ -95,7 +94,7 @@
       hasil.innerHTML = '';
 
       try {
-        const res = await fetch('https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec?tgllahir=' + encodeURIComponent(tanggal));
+        const res = await fetch('https://script.google.com/macros/s/AKfycby8rHPqS5fsqFgGXrSL_SmUpQ566pd8j9A32paSB67WlxpX35xUivns1BePguq2br0a/exec?tgllahir=' + encodeURIComponent(tanggal));
         const data = await res.json();
 
         if (!data || !data.nama) {
