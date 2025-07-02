@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -99,19 +98,23 @@
         const data = await res.json();
         loading.style.display = 'none';
 
-        if (!data || !data.found) {
+        if (!data || !data.found || data.results.length === 0) {
           hasil.innerHTML = '<strong>Data tidak ditemukan. Pastikan format tanggal sesuai (DD/MM/YYYY).</strong>';
           hasil.classList.add('error');
         } else {
-          hasil.innerHTML = `
-            <strong>SELAMAT ANDA TELAH TERDAFTAR SEBAGAI SANTRI BARU DI PONDOK PESANTREN NAHDLATUL ARIFIN TAHUN AJARAN 1446-1447 H / 2025-2026 M</strong><br><br>
-            <strong>Nama:</strong> ${data.nama}<br>
-            <strong>No. Pendaftaran:</strong> ${data.noPendaftaran}<br>
-            <strong>Tanggal Lahir:</strong> ${data.tanggalLahir}<br>
-            <strong>Tanggal Terdaftar:</strong> ${data.tanggalDaftar}<br>
-            <br>
-            <a href="${data.linkPDF}" target="_blank"><button>Download Bukti Pendaftaran</button></a>
-          `;
+          hasil.innerHTML = '<strong>Berikut data pendaftar yang ditemukan:</strong><br><br>';
+          data.results.forEach((item, index) => {
+            hasil.innerHTML += `
+              <div style="margin-bottom:1.5rem;">
+                <strong>${index + 1}. Nama:</strong> ${item.nama}<br>
+                <strong>No. Pendaftaran:</strong> ${item.noPendaftaran}<br>
+                <strong>Tanggal Lahir:</strong> ${item.tanggalLahir}<br>
+                <strong>Tanggal Terdaftar:</strong> ${item.tanggalDaftar}<br>
+                <a href="${item.linkPDF}" target="_blank"><button>Download Bukti Pendaftaran</button></a>
+              </div>
+              <hr>
+            `;
+          });
         }
         hasil.style.display = 'block';
       } catch (err) {
